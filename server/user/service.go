@@ -1,6 +1,7 @@
 package user
 
 import (
+	"assess/auth"
 	"assess/entity"
 	"assess/helper"
 	"errors"
@@ -20,10 +21,11 @@ type Service interface {
 
 type service struct {
 	repository Repository
+	auth       auth.Service
 }
 
-func NewService(repo Repository) *service {
-	return &service{repo}
+func NewService(repo Repository, auth auth.Service) *service {
+	return &service{repo, auth}
 }
 
 func (s *service) ShowAllUser() ([]UserFormat, error) {
