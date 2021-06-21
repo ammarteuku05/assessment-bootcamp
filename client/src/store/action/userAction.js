@@ -1,6 +1,6 @@
 import api from "../../API/api"
 
-export const registerUser = (payload) =>{
+export const register = (payload) =>{
     return async (dispatch) => {
         try {
             dispatch({ type : "USER_LOADING"})
