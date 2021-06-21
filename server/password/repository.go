@@ -11,6 +11,8 @@ type Repository interface {
 	Create(user entity.Password) (entity.Password, error)
 	FindByID(ID string) (entity.Password, error)
 	UpdateByID(ID string, dataUpdate map[string]interface{}) (entity.Password, error)
+	FindByUserId(UserID string) ([]entity.Password, error)
+	Delete(ID string) (string, error)
 }
 
 type repository struct {
@@ -41,10 +43,20 @@ func (r *repository) Create(user entity.Password) (entity.Password, error) {
 func (r *repository) FindByID(ID string) (entity.Password, error) {
 	var user entity.Password
 
-	if err := r.db.Where("user_id = ?", ID).Find(&user).Error; err != nil {
+	if err := r.db.Where("id = ?", ID).Find(&user).Error; err != nil {
 		return user, err
 	}
 	return user, nil
+}
+
+func (r *repository) FindByUserId(UserID string) ([]entity.Password, error) {
+	var pass []entity.Password
+
+	if err := r.db.Where("user_id=?", UserID).Find(&pass).Error; err != nil {
+		return pass, err
+	}
+
+	return pass, nil
 }
 
 func (r *repository) UpdateByID(ID string, dataUpdate map[string]interface{}) (entity.Password, error) {
@@ -59,4 +71,14 @@ func (r *repository) UpdateByID(ID string, dataUpdate map[string]interface{}) (e
 	}
 
 	return user, nil
+}
+
+func (r *repository) Delete(ID string) (string, error) {
+	var pass entity.Password
+
+	if err := r.db.Where("id = ?", ID).Delete(&pass).Error; err != nil {
+		return "error", err
+	}
+
+	return "succcess", nil
 }
