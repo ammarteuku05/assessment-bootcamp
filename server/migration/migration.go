@@ -9,5 +9,8 @@ type User struct {
 }
 
 type Password struct {
-	ID int `gorm:"primaryKey"`
+	ID      int `gorm:"primaryKey"`
+	Website string
+	Pass    string
+	UserID  int
 }
