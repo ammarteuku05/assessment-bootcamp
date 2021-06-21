@@ -10,7 +10,6 @@ type Repository interface {
 	FindAll() ([]entity.User, error)
 	Create(user entity.User) (entity.User, error)
 	FindByID(ID string) (entity.User, error)
-	DeleteByID(ID string) (string, error)
 	UpdateByID(ID string, dataUpdate map[string]interface{}) (entity.User, error)
 	FindByEmail(email string) (entity.User, error)
 }
@@ -47,15 +46,6 @@ func (r *repository) FindByID(ID string) (entity.User, error) {
 		return user, err
 	}
 	return user, nil
-}
-
-func (r *repository) DeleteByID(ID string) (string, error) {
-
-	if err := r.db.Where("id = ?", ID).Delete(&entity.User{}).Error; err != nil {
-		return "error", err
-	}
-
-	return "success", nil
 }
 
 func (r *repository) UpdateByID(ID string, dataUpdate map[string]interface{}) (entity.User, error) {
