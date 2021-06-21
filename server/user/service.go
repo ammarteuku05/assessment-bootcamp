@@ -130,7 +130,7 @@ func (s *service) LoginUser(input entity.LoginUser) (entity.User, error) {
 	}
 
 	if user.ID == 0 {
-		newErr := fmt.Sprintf("user id %s not found", user.ID)
+		newErr := fmt.Sprintf("user id %v not found", user.ID)
 		return user, errors.New(newErr)
 	}
 

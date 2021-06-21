@@ -21,7 +21,7 @@ var (
 )
 
 func Config() *gorm.DB {
-	conn := fmt.Sprint("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", userDB, passDB, hostDB, nameDB)
+	conn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", userDB, passDB, hostDB, nameDB)
 
 	db, err := gorm.Open(mysql.Open(conn), &gorm.Config{})
 
