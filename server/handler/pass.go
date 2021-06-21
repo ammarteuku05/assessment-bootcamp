@@ -72,7 +72,25 @@ func (h *passHandler) CreatePassHandler(c *gin.Context) {
 	c.JSON(201, res)
 }
 func (h *passHandler) ShowByIDPass(c *gin.Context) {
-	var input entity.Password
+	id := c.Params.ByName("pass_id")
+
+	pass, err := h.service.ShowPassowordByID(id)
+
+	if err != nil {
+		errRespon := helper.ResponseAPI("error bad requeest", 400, "error", gin.H{"error": err.Error()})
+
+		c.JSON(400, errRespon)
+		return
+	}
+
+	res := helper.ResponseAPI("success", 201, "status create", pass)
+	c.JSON(200, res)
+}
+
+func (h *passHandler) UpdatebyIDPass(c *gin.Context) {
+	passID := c.Params.ByName("pass_id")
+
+	var input entity.PasswordInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		errSplit := helper.DivErrInfor(err)
@@ -81,4 +99,32 @@ func (h *passHandler) ShowByIDPass(c *gin.Context) {
 		c.JSON(400, errRespon)
 		return
 	}
+
+	pass, err := h.service.UpdatePassowordByID(passID, input)
+
+	if err != nil {
+		errRespon := helper.ResponseAPI("internal server error", 500, "error", gin.H{"error": err.Error()})
+
+		c.JSON(500, errRespon)
+		return
+	}
+
+	res := helper.ResponseAPI("successs", 200, "success", pass)
+	c.JSON(200, res)
+}
+
+func (h *passHandler) DeletePassHandler(c *gin.Context) {
+	passID := c.Params.ByName("pass_id")
+
+	msg, err := h.service.DeletePassword(passID)
+
+	if err != nil {
+		errRespon := helper.ResponseAPI("internal server error", 500, "error", gin.H{"error": err.Error()})
+
+		c.JSON(500, errRespon)
+		return
+	}
+
+	res := helper.ResponseAPI("successs", 200, "success", msg)
+	c.JSON(200, res)
 }

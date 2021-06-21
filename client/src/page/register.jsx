@@ -24,7 +24,7 @@ function Resister(){
     return(
         <>
         <Navbar/>
-        <Form>
+        <Form onSubmit={registerSubmit}>
   <Form.Group className="mb-3" controlId="formNmae">
     <Form.Label>Full Name</Form.Label>
     <Form.Control type="name" placeholder="Enter Full Name" onchange={e=>{

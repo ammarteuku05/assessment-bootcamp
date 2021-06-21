@@ -1,7 +1,6 @@
 package password
 
 import (
-	"assess/auth"
 	"assess/entity"
 	"fmt"
 	"time"
@@ -17,14 +16,13 @@ type Service interface {
 
 type service struct {
 	repository Repository
-	auth       auth.Service
 }
 
-func NewService(repo Repository, auth auth.Service) *service {
-	return &service{repo, auth}
+func NewService(repo Repository) *service {
+	return &service{repo}
 }
 
-func (s *service) ShowAllPassowrd(userID string) ([]entity.Password, error) {
+func (s *service) ShowAllPassoword(userID string) ([]entity.Password, error) {
 	pass, err := s.repository.FindByUserId(userID)
 
 	if err != nil {
