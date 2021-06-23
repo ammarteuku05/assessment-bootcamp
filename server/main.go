@@ -50,18 +50,15 @@ func main() {
 	r.Use(CORSMiddleware())
 
 	// user
-	r.GET("/users", middleware, userHandler.GetAllUserHandler)
-	r.GET("/users/:user_id", middleware, userHandler.GetUserByIDHandler)
-	r.POST("/users/register", userHandler.SaveNewUserHandler)
+	r.POST("/users/register", userHandler.CreateUserHandler)
 	r.POST("/users/login", userHandler.LoginUserHandler)
-	r.PUT("/users/:user_id", middleware, userHandler.UpdateUserHandler)
 
 	// pass
 
 	r.GET("/pass", middleware, passHandle.GetAllPassbyUser)
 	r.GET("/pass/:pass_id", middleware, passHandle.ShowByIDPass)
 	r.POST("/pass", middleware, passHandle.CreatePassHandler)
-	r.PUT("/pass", middleware, passHandle.UpdatebyIDPass)
-	r.DELETE("/pass", middleware, passHandle.DeletePassHandler)
-	r.Run()
+	r.PUT("/pass/:pass_id", middleware, passHandle.UpdatebyIDPass)
+	r.DELETE("/pass/:pass_id", middleware, passHandle.DeletePassHandler)
+	r.Run(":4444")
 }

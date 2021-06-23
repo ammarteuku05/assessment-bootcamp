@@ -2,38 +2,29 @@ package helper
 
 import (
 	"errors"
+	"math"
 	"strconv"
 
 	"github.com/go-playground/validator/v10"
 )
 
-type Response struct {
-	Meta Meta        `json:"meta"`
-	Data interface{} `json:"data"`
+type NewResponse struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
 }
 
-type Meta struct {
-	Message string `json:"Message"`
-	Code    int    `json:"code"`
-	Status  string `json:"status"`
-}
-
-func ResponseAPI(mess string, code int, status string, data interface{}) Response {
-	var meta = Meta{
-		Message: mess,
+func APINewResponse(code int, msg string, data interface{}) NewResponse {
+	var response = NewResponse{
 		Code:    code,
-		Status:  status,
-	}
-
-	var response = Response{
-		Meta: meta,
-		Data: data,
+		Message: msg,
+		Data:    data,
 	}
 
 	return response
 }
 
-func DivErrInfor(err error) []string {
+func SplitErrorInformation(err error) []string {
 	var errors []string
 
 	for _, e := range err.(validator.ValidationErrors) {
@@ -43,10 +34,10 @@ func DivErrInfor(err error) []string {
 	return errors
 }
 
-func ValidateID(ID string) error {
-	if num, err := strconv.Atoi(ID); err != nil || num == 0 {
-		return errors.New("Input have to be valid user id")
-
+func ValidateIDNumber(ID string) error {
+	if num, err := strconv.Atoi(ID); err != nil || num == 0 || math.Signbit(float64(num)) == true {
+		return errors.New("input must be a valid id user")
 	}
+
 	return nil
 }

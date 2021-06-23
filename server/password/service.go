@@ -1,16 +1,15 @@
 package password
 
 import (
-	"assess/entity"
 	"fmt"
 	"time"
 )
 
 type Service interface {
-	ShowAllPassoword(userID string) ([]entity.Password, error)
-	CreateNewPassoword(userID int, user entity.PasswordInput) (entity.Password, error)
-	ShowPassowordByID(userID string) (entity.Password, error)
-	UpdatePassowordByID(userID string, dataInput entity.PasswordInput) (entity.Password, error)
+	ShowAllPassoword(userID string) ([]Password, error)
+	CreateNewPassoword(userID int, user PasswordInput) (Password, error)
+	ShowPassowordByID(userID string) (Password, error)
+	UpdatePassowordByID(userID string, dataInput PasswordInput) (Password, error)
 	DeletePassword(passID string) (string, error)
 }
 
@@ -22,7 +21,7 @@ func NewService(repo Repository) *service {
 	return &service{repo}
 }
 
-func (s *service) ShowAllPassoword(userID string) ([]entity.Password, error) {
+func (s *service) ShowAllPassoword(userID string) ([]Password, error) {
 	pass, err := s.repository.FindByUserId(userID)
 
 	if err != nil {
@@ -32,8 +31,8 @@ func (s *service) ShowAllPassoword(userID string) ([]entity.Password, error) {
 	return pass, nil
 }
 
-func (s *service) CreateNewPassoword(userID int, user entity.PasswordInput) (entity.Password, error) {
-	var newPass = entity.Password{
+func (s *service) CreateNewPassoword(userID int, user PasswordInput) (Password, error) {
+	var newPass = Password{
 		UserID:   userID,
 		Website:  user.Website,
 		Pass:     user.Pass,
@@ -50,7 +49,7 @@ func (s *service) CreateNewPassoword(userID int, user entity.PasswordInput) (ent
 	return pass, nil
 }
 
-func (s *service) ShowPassowordByID(userID string) (entity.Password, error) {
+func (s *service) ShowPassowordByID(userID string) (Password, error) {
 	pass, err := s.repository.FindByID(userID)
 
 	if err != nil {
@@ -60,15 +59,15 @@ func (s *service) ShowPassowordByID(userID string) (entity.Password, error) {
 	return pass, nil
 }
 
-func (s *service) UpdatePassowordByID(userID string, dataInput entity.PasswordInput) (entity.Password, error) {
+func (s *service) UpdatePassowordByID(userID string, dataInput PasswordInput) (Password, error) {
 	var dtUpdate = map[string]interface{}{}
 
 	if dataInput.Pass != "" {
-		dtUpdate["password"] = dataInput.Pass
+		dtUpdate["Pass"] = dataInput.Pass
 	}
 
 	if dataInput.Website != "" {
-		dtUpdate["website"] = dataInput.Website
+		dtUpdate["Website"] = dataInput.Website
 	}
 
 	dtUpdate["update_at"] = time.Now()

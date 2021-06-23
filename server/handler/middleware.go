@@ -11,34 +11,39 @@ import (
 
 func Middleware(userService user.Service, authService auth.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		auth := c.GetHeader("Authorization")
+		authHeader := c.GetHeader("Authorization")
 
-		if auth == "" || len(auth) == 0 {
-			errRespon := helper.ResponseAPI("Unauthorization", 401, "error", gin.H{"error": "unauthorize user"})
+		if authHeader == "" || len(authHeader) == 0 {
+			errorResponse := helper.APINewResponse(401, "Unauthorized user", gin.H{"error": "unauthorize user"})
 
-			c.AbortWithStatusJSON(401, errRespon)
+			c.AbortWithStatusJSON(401, errorResponse)
 			return
 		}
 
-		token, err := authService.ValidateToken(auth)
+		// eksekusi code untuk mengecek apakah token itu valid dari server kita atau tidak
+		token, err := authService.ValidateToken(authHeader)
+
 		if err != nil {
-			errRespon := helper.ResponseAPI("Unauthorize", 401, "error", gin.H{"error": err.Error()})
-			c.AbortWithStatusJSON(401, errRespon)
+			errorResponse := helper.APINewResponse(401, "Unauthorized user", gin.H{"error": "unauthorize user"})
+
+			c.AbortWithStatusJSON(401, errorResponse)
 			return
 		}
 
 		claim, ok := token.Claims.(jwt.MapClaims)
 
 		if !ok {
-			errRespon := helper.ResponseAPI("Unauthorization", 401, "error", gin.H{"error": "unauthorize user"})
+			errorResponse := helper.APINewResponse(401, "Unauthorized user", gin.H{"error": "unauthorize user"})
 
-			c.AbortWithStatusJSON(401, errRespon)
+			c.AbortWithStatusJSON(401, errorResponse)
 			return
 		}
 
 		userID := int(claim["user_id"].(float64))
 
+		// kita bisa pakai nanti
 		c.Set("currentUser", userID)
-
+		// -
 	}
+
 }

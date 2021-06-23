@@ -2,10 +2,8 @@ package handler
 
 import (
 	"assess/auth"
-	"assess/entity"
 	"assess/helper"
 	"assess/user"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,128 +17,56 @@ func NewUserHandler(userService user.Service, authService auth.Service) *userHan
 	return &userHandler{userService, authService}
 }
 
-func (h *userHandler) GetAllUserHandler(c *gin.Context) {
-	users, err := h.userService.ShowAllUser()
+func (h *userHandler) CreateUserHandler(c *gin.Context) {
+	var inputUser user.RegisterInput
 
+	if err := c.ShouldBindJSON(&inputUser); err != nil {
+		splitError := helper.SplitErrorInformation(err)
+		responseError := helper.APINewResponse(400, "Input data required", gin.H{"errors": splitError})
+
+		c.JSON(400, responseError)
+		return
+	}
+
+	newUser, err := h.userService.CreateNewUser(inputUser)
 	if err != nil {
-		errResponse := helper.ResponseAPI("internal server error", 500, "error", gin.H{"error": err.Error()})
+		responseError := helper.APINewResponse(500, "Internal server error", gin.H{"error": err.Error()})
 
-		c.JSON(500, errResponse)
+		c.JSON(500, responseError)
 		return
 	}
 
-	respon := helper.ResponseAPI("success", 200, "success", users)
-
-	c.JSON(200, respon)
-}
-
-func (h *userHandler) SaveNewUserHandler(c *gin.Context) {
-	var input entity.UserInput
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		errSplit := helper.DivErrInfor(err)
-		errRespon := helper.ResponseAPI("input data required", 400, "bad request", gin.H{"errors": errSplit})
-
-		c.JSON(400, errRespon)
-		return
-	}
-
-	addUser, err := h.userService.CreateNewUser(input)
-
-	if err != nil {
-		errRespon := helper.ResponseAPI("internal server error", 500, "error", gin.H{"error": err.Error()})
-
-		c.JSON(500, errRespon)
-		return
-	}
-
-	res := helper.ResponseAPI("success", 201, "status created", addUser)
-
-	c.JSON(201, res)
-}
-
-func (h *userHandler) GetUserByIDHandler(c *gin.Context) {
-	id := c.Params.ByName("user_id")
-
-	user, err := h.userService.ShowUserByID(id)
-
-	if err != nil {
-		errRespon := helper.ResponseAPI("error bad requeest", 400, "error", gin.H{"error": err.Error()})
-
-		c.JSON(400, errRespon)
-		return
-	}
-	res := helper.ResponseAPI("success", 201, "status create", user)
-	c.JSON(200, res)
-}
-
-func (h *userHandler) UpdateUserHandler(c *gin.Context) {
-	id := c.Params.ByName("user_id")
-
-	var update entity.UpdateUser
-
-	if err := c.ShouldBindJSON(&update); err != nil {
-		errSplit := helper.DivErrInfor(err)
-		errRespon := helper.ResponseAPI("input data required", 400, "bad request", gin.H{"errors": errSplit})
-
-		c.JSON(400, errRespon)
-		return
-	}
-
-	idParam, _ := strconv.Atoi(id)
-
-	datUser := int(c.MustGet("currentUser").(int))
-
-	if idParam != datUser {
-		errRespon := helper.ResponseAPI("Unauthorize", 401, "error", gin.H{"error": "user ID not authorize"})
-
-		c.JSON(401, errRespon)
-		return
-	}
-
-	user, err := h.userService.UpdateUserByID(id, update)
-	if err != nil {
-		errRespon := helper.ResponseAPI("internal server error", 500, "error", gin.H{"error": err.Error()})
-
-		c.JSON(500, errRespon)
-		return
-	}
-
-	res := helper.ResponseAPI("successs", 200, "success", user)
-	c.JSON(200, res)
+	response := helper.APINewResponse(201, "Create new user succeed", newUser)
+	c.JSON(201, response)
 }
 
 func (h *userHandler) LoginUserHandler(c *gin.Context) {
-	var input entity.LoginUser
+	var inputLoginUser user.InputLogin
 
-	if err := c.ShouldBindJSON(&input); err != nil {
-		errSplit := helper.DivErrInfor(err)
-		errRespon := helper.ResponseAPI("input data required", 400, "bad request", gin.H{"errors": errSplit})
+	if err := c.ShouldBindJSON(&inputLoginUser); err != nil {
+		splitError := helper.SplitErrorInformation(err)
+		responseError := helper.APINewResponse(400, "Input data required", gin.H{"errors": splitError})
 
-		c.JSON(400, errRespon)
+		c.JSON(400, responseError)
 		return
 	}
 
-	user, err := h.userService.LoginUser(input)
+	userData, err := h.userService.LoginUser(inputLoginUser)
 
 	if err != nil {
-		errSplit := helper.DivErrInfor(err)
-		errRespon := helper.ResponseAPI("input data error", 401, "bad request", gin.H{"errors": errSplit})
+		responseError := helper.APINewResponse(401, "Input data error", gin.H{"errors": err.Error()})
 
-		c.JSON(401, errRespon)
+		c.JSON(401, responseError)
 		return
 	}
 
-	token, err := h.authService.GenerateToken(user.ID)
+	token, err := h.authService.GenerateToken(userData.ID)
+	if err != nil {
+		responseError := helper.APINewResponse(500, "Internal server error", gin.H{"error": err.Error()})
 
-	if err := c.ShouldBindJSON(&input); err != nil {
-		errSplit := helper.DivErrInfor(err)
-		errRespon := helper.ResponseAPI("input server error", 500, "error", gin.H{"errors": errSplit})
-
-		c.JSON(401, errRespon)
+		c.JSON(401, responseError)
 		return
 	}
-
-	res := helper.ResponseAPI("success", 200, "success", gin.H{"toker": token})
-	c.JSON(200, res)
+	response := helper.APINewResponse(200, "Login user succeed", gin.H{"token": token})
+	c.JSON(200, response)
 }

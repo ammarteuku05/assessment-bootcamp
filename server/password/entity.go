@@ -1,4 +1,4 @@
-package entity
+package password
 
 import "time"
 
@@ -9,9 +9,10 @@ type Password struct {
 	UserID   int
 	CreateAt time.Time
 	UpdateAt time.Time
+	DeleteAt time.Time `gorm:"index"`
 }
 
 type PasswordInput struct {
-	Website string `json:"website" binding:"required"`
-	Pass    string `json:"pass" binding:"required"`
+	Website string `json:"website"`
+	Pass    string `json:"pass"`
 }

@@ -1,7 +1,6 @@
 package user
 
 import (
-	"assess/entity"
 	"time"
 )
 
@@ -12,11 +11,12 @@ type UserFormat struct {
 	Email    string `json:"email"`
 }
 
-func FormatUser(user entity.User) UserFormat {
+func FormatUser(user User) UserFormat {
 	var format = UserFormat{
 		ID:       user.ID,
 		FullName: user.FullName,
 		Email:    user.Email,
+		Address:  user.Address,
 	}
 
 	return format
