@@ -99,7 +99,7 @@ export const deletePass = (id, history) => {
 
            return dispatch({ type : "DELETE_PASS", payload : data})
         } catch(err) {
-            dispatch({ type : "ERROR_BOOKS"})
+            dispatch({ type : "ERROR_PASS"})
             console.log(err.response.data)
         }
     }
