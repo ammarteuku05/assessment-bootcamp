@@ -1,23 +1,27 @@
 import React, { useState } from "react"
 
 import Navbar from "../component/navbar"
-import Footer from "../component/footer"
-import { useDispatch } from "react-redux"
-
-import { registerUser } from '../store/action/userAction'
+import { useDispatch, useSelector } from "react-redux"
+import { useHistory } from "react-router-dom"
+import { register } from '../store/action/userAction'
 
 function RegisterPage() {
+    const history = useHistory()
 
     const dispatch = useDispatch()
+    
 
     const [name, setName] = useState("")
     const [address, setAddress] = useState("")
     const [email, setEmail] = useState("")
     const [pass, setPass] = useState("")
 
-    const registerSubmit = () => {
+    const { error } = useSelector(state => state.user)
+
+    const registerSubmit = (e) => {
+        e.preventDefault()
         const data = {
-            name : name, 
+            full_name : name, 
             address : address,
             email : email,
             password :pass,
@@ -25,7 +29,12 @@ function RegisterPage() {
 
         console.log(data)
 
-        dispatch(registerUser(data))
+        
+        if (!error) {
+            dispatch(register(data))
+            history.push("/login")
+        }
+        dispatch(register(data))
     }
 
     return(
@@ -49,13 +58,6 @@ function RegisterPage() {
                 }}/>
             </div>
             <div className="mb-3">
-                <label for="date-birth" className="form-label">Date birth</label>
-                <input type="text" className="form-control" id="date-birth" onChange={e => {
-                    e.preventDefault()
-                    setDate(e.target.value)
-                }}/>
-            </div>
-            <div className="mb-3">
                 <label for="email" className="form-label">Email address</label>
                 <input type="email" className="form-control" id="email" aria-describedby="emailHelp" onChange={e => {
                     e.preventDefault()
@@ -73,7 +75,7 @@ function RegisterPage() {
             <button type="submit" className="btn btn-primary">Register</button>
             </form>
         </div>
-        <Footer/>
+        {/* <Footer/> */}
         </div>
     )
 }

@@ -60,13 +60,13 @@ func (h *userHandler) LoginUserHandler(c *gin.Context) {
 		return
 	}
 
-	token, err := h.authService.GenerateToken(userData.ID)
+	// token, err := h.authService.GenerateToken(userData.ID)
 	if err != nil {
 		responseError := helper.APINewResponse(500, "Internal server error", gin.H{"error": err.Error()})
 
 		c.JSON(401, responseError)
 		return
 	}
-	response := helper.APINewResponse(200, "Login user succeed", gin.H{"token": token})
+	response := helper.APINewResponse(200, "Login user succeed", userData)
 	c.JSON(200, response)
 }

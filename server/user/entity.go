@@ -16,3 +16,12 @@ type User struct {
 	UpdateAt time.Time
 	DeleteAt time.Time `gorm:"index"`
 }
+
+type UserOutput struct {
+	ID            int `gorm:"primaryKey"`
+	FullName      string
+	Email         string
+	Password      string
+	Address       string
+	Authorization string
+}

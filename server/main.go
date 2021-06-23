@@ -60,5 +60,5 @@ func main() {
 	r.POST("/pass", middleware, passHandle.CreatePassHandler)
 	r.PUT("/pass/:pass_id", middleware, passHandle.UpdatebyIDPass)
 	r.DELETE("/pass/:pass_id", middleware, passHandle.DeletePassHandler)
-	r.Run(":4444")
+	r.Run()
 }

@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux'
-
-import userReducer from './reducer/userReducer'
-// import bookReducer from './reducer/bookReducer'
+import passReducer from './reducer/passReducer'
+import user from './reducer/userReducer';
 
 
 const rootReducer = combineReducers({
-    user : userReducer,
-    // book : bookReducer,
+    user : user,
+    pass : passReducer,
 })
 
-export default rootReducer
+export default rootReducer;
+

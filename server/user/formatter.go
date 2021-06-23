@@ -11,6 +11,14 @@ type UserFormat struct {
 	Email    string `json:"email"`
 }
 
+type UserLoginFormatter struct {
+	ID            int    `json:"id"`
+	FullName      string `json:"full_name"`
+	Email         string `json:"email"`
+	Address       string `json:"address"`
+	Authorization string `json:"authorization"`
+}
+
 func FormatUser(user User) UserFormat {
 	var format = UserFormat{
 		ID:       user.ID,
@@ -20,6 +28,16 @@ func FormatUser(user User) UserFormat {
 	}
 
 	return format
+}
+
+func UserLoginFormat(user User, token string) UserLoginFormatter {
+	return UserLoginFormatter{
+		ID:            user.ID,
+		FullName:      user.FullName,
+		Email:         user.Email,
+		Address:       user.Address,
+		Authorization: token,
+	}
 }
 
 type DeleteFormat struct {

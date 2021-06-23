@@ -1,11 +1,11 @@
-import apiBase from '../../API/axios'
+import api from "../../APIs/api"
 
-export const registerUser = (payload) => {
+export const register = (payload) => {
     return async (dispatch) => {
         try {
             dispatch({ type : "USER_LOADING"})
     
-            const { data } = await apiBase({
+            const { data } = await api({
                 method : "POST",
                 url : "/users/register",
                 data : payload,
@@ -16,32 +16,36 @@ export const registerUser = (payload) => {
             return dispatch({ type : "USER_REGISTER", payload : data})
 
         } catch(err) {
-            // err?.response?.data ? dispatch({ type : "USER_ERROR", payload: err.response.data}) : console.log(err.response.data)
             console.log(err.response)
         }
     }
 }
 
-export const loginUser = (payload) => {
+export const login = (payload, history) => {
+    
     return async (dispatch) => {
         try {
             dispatch({ type : "USER_LOADING"})
     
-            const { data } = await apiBase({
+            const { data } = await api({
                 method : "POST",
                 url : "/users/login",
                 data : payload,
             })
 
-            localStorage.setItem("access_token", data.authorization)
+            localStorage.setItem("access_token", data.data.authorization)
 
-            console.log(data)
+            // console.log("data",data.data.authorization)
+            console.log(payload)
+
+            history.push("/pass")
 
             return dispatch({ type : "USER_LOGIN", payload : data})
 
+
         } catch(err) {
-            // err?.response?.data ? dispatch({ type : "USER_ERROR", payload: err.response.data}) : console.log(err.response.data)
-        
+            console.log(payload)
+            dispatch({type : "USER_ERROR", payload : err})
             console.log(err.response)
         }
     }

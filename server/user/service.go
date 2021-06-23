@@ -3,7 +3,6 @@ package user
 import (
 	"assess/auth"
 	"errors"
-	"fmt"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -11,7 +10,7 @@ import (
 
 type Service interface {
 	CreateNewUser(user RegisterInput) (UserFormat, error)
-	LoginUser(input InputLogin) (User, error)
+	LoginUser(input InputLogin) (UserLoginFormatter, error)
 }
 
 type service struct {
@@ -49,21 +48,26 @@ func (s *service) CreateNewUser(user RegisterInput) (UserFormat, error) {
 	return formatUser, nil
 }
 
-func (s *service) LoginUser(input InputLogin) (User, error) {
+func (s *service) LoginUser(input InputLogin) (UserLoginFormatter, error) {
 	user, err := s.repository.FindByEmail(input.Email)
 
 	if err != nil {
-		return user, err
+		return UserLoginFormatter{}, err
 	}
 
-	if user.ID == 0 {
-		newErr := fmt.Sprintf("user id %v not found", user.ID)
-		return user, errors.New(newErr)
+	if user.ID == 0 || len(user.FullName) <= 1 {
+		return UserLoginFormatter{}, errors.New("user email / password invalid")
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
-		return user, errors.New("password invalid")
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
+
+	if err != nil {
+		return UserLoginFormatter{}, errors.New("user email / password invalid")
 	}
 
-	return user, nil
+	token, _ := s.auth.GenerateToken(user.ID)
+
+	formatter := UserLoginFormat(user, token)
+
+	return formatter, nil
 }
